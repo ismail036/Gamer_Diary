@@ -19,6 +19,16 @@ class Dictionary extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: DictionaryBody(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton:FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          backgroundColor: Color(0xffFFCB1A),
+          child: Icon(Icons.keyboard_backspace_rounded,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }
@@ -63,6 +73,8 @@ class _DictionaryBodyState extends State<DictionaryBody> {
   var color = Color(0xffF5F5F7);
   var selectedColor = Color(0xffFFCB1A);
 
+  var selectedChar = "A";
+
   var data = [];
 
   var currData = [];
@@ -105,15 +117,44 @@ class _DictionaryBodyState extends State<DictionaryBody> {
               child: Row(
                 children: [
                   for(int i = 0 ; i<alphabet.length ; i++)
-                    Container(
-                      padding: EdgeInsets.symmetric(vertical: 12,horizontal: 18),
-                      margin: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          color: color,
-                          borderRadius: BorderRadius.circular(15)
-                      ),
-                      child: Text(alphabet[i]  ),
-                    )
+                    if(alphabet[i] == selectedChar)
+                        GestureDetector(
+                          onTap: (){
+                            selectedChar = alphabet[i];
+                            setDataList(alphabet[i]);
+                            setState(() {
+
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 12,horizontal: 18),
+                            margin: EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                                color: selectedColor,
+                                borderRadius: BorderRadius.circular(15)
+                            ),
+                            child: Text( alphabet[i]  ),
+                          ),
+                        )
+                     else
+                      GestureDetector(
+                        onTap: (){
+                          selectedChar = alphabet[i];
+                          setDataList(alphabet[i]);
+                          setState(() {
+
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 12,horizontal: 18),
+                          margin: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              color: color,
+                              borderRadius: BorderRadius.circular(15)
+                          ),
+                          child: Text( alphabet[i]),
+                        ),
+                      )
                 ],
               ),
             ),

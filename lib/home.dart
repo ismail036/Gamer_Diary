@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 
+import 'characterCards.dart';
 import 'dictionary.dart';
 final _key = GlobalKey<ExpandableFabState>();
 
@@ -83,26 +85,31 @@ class _HomeBodyState extends State<HomeBody> {
                       ),
                     ),
                   ),
-                  Container(
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.all(6),
-                    width: MediaQuery.of(context).size.width * 0.45,
-                    height: 200,
-                    decoration: BoxDecoration(
-                        color: Color(0xffF5F5F7),
-                        borderRadius: BorderRadius.circular(40)
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image(image: AssetImage("assets/magical_sword.png"),
-                          width: MediaQuery.of(context).size.width * 0.30,),
-                        SizedBox(height: 10,),
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.30,
-                          child: Text("Character cards",textAlign: TextAlign.center),
-                        )
-                      ],
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => CharacterCard()));
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.all(6),
+                      width: MediaQuery.of(context).size.width * 0.45,
+                      height: 200,
+                      decoration: BoxDecoration(
+                          color: Color(0xffF5F5F7),
+                          borderRadius: BorderRadius.circular(40)
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image(image: AssetImage("assets/magical_sword.png"),
+                            width: MediaQuery.of(context).size.width * 0.30,),
+                          SizedBox(height: 10,),
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.30,
+                            child: Text("Character cards",textAlign: TextAlign.center),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                   Container(
@@ -241,7 +248,9 @@ class _HomeBodyState extends State<HomeBody> {
                     }
                   });
               },
-              ),]
+              ),
+                SizedBox(height: 10,)
+              ]
             )
           )
        ]
