@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import 'characterCardsAdd.dart';
+
 class CharacterCard extends StatelessWidget {
   const CharacterCard({super.key});
 
@@ -37,7 +39,7 @@ class CharacterCard extends StatelessWidget {
             SizedBox(width: 25,),
             FloatingActionButton(
               onPressed: () {
-                // Add functionality for the second button here
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CharacterCardsAdd()));
               },
               backgroundColor: Color(0xffFFCB1A), // Change color as needed
               child: Icon(
@@ -129,9 +131,6 @@ class _CharacterCardBodyState extends State<CharacterCardBody> {
 
               ],
             )
-
-
-
         ],
       ),
       ),
