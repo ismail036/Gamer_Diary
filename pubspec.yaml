@@ -51,6 +51,7 @@ dev_dependencies:
   flutter_svg: ^2.0.10+1
   image_picker: ^1.0.7
   dropdown_button2: ^2.3.9
+  circular_countdown_timer: ^0.2.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
