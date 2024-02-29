@@ -391,17 +391,10 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
                     ),
 
                     SizedBox(height: 15,),
-
-
-
+                    
                   ]
             ),
           ),
     );
-
-
   }
-
 }
-
-
