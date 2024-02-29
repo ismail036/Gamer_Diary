@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
+import 'package:flutter/widgets.dart';
 
 
 class TimeTracker extends StatelessWidget {
@@ -69,45 +71,73 @@ class _TimeTrackerBodyState extends State<TimeTrackerBody> {
             ),
           ),
 
-          Expanded(
+          Center(
             child: CircularCountDownTimer(
-              duration: 100,
-              initialDuration: 0,
-              controller: CountDownController(),
-              width: MediaQuery.of(context).size.width / 2,
-              height: MediaQuery.of(context).size.height / 2,
-              ringColor: Colors.grey[300]!,
-              ringGradient: null,
-              fillColor: Colors.indigo,
-              fillGradient: null,
-              backgroundGradient: null,
-              strokeWidth: 15.0,
-              strokeCap: StrokeCap.round,
-              textStyle: TextStyle(
-                  fontSize: 30.0, color: Colors.black, fontWeight: FontWeight.w900),
-              textFormat: CountdownTextFormat.HH_MM_SS,
-              isReverse: false,
-              isReverseAnimation: false,
-              isTimerTextShown: true,
-              autoStart: true,
-              onStart: () {
-                debugPrint('Countdown Started');
-              },
-              onComplete: () {
+                duration: 0,
+                initialDuration: 0,
+                controller: CountDownController(),
+                width: MediaQuery.of(context).size.width / 2,
+                height: MediaQuery.of(context).size.height / 3,
+                ringColor: Colors.grey[300]!,
+                ringGradient: null,
+                fillColor: Colors.grey[300]!,
+                fillGradient: null,
+                backgroundGradient: null,
+                strokeWidth: 15.0,
+                strokeCap: StrokeCap.round,
+                textStyle: TextStyle(
+                    fontSize: 30.0, color: Colors.black, fontWeight: FontWeight.w300),
+                textFormat: CountdownTextFormat.HH_MM_SS,
+                isReverse: false,
+                isReverseAnimation: false,
+                isTimerTextShown: true,
+                autoStart: true,
+                onStart: () {
+                  debugPrint('Countdown Started');
+                },
+                onComplete: () {
+            
+                },
+                onChange: (String timeStamp) {
+                  print('Countdown Changed $timeStamp');
+                },
+                timeFormatterFunction: (defaultFormatterFunction, duration) {
+                    return Function.apply(defaultFormatterFunction, [duration]);
+                },
+              ),
+          ),
 
-              },
-              onChange: (String timeStamp) {
-                print('Countdown Changed $timeStamp');
-              },
-              timeFormatterFunction: (defaultFormatterFunction, duration) {
-                if (duration.inSeconds == 0) {
-                  return "Start";
-                } else {
-                  return Function.apply(defaultFormatterFunction, [duration]);
-                }
-              },
+          Center(
+            child: Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Color(0xffFFCB1A),
+              ),
+              child: TextButton(
+                onPressed: () {
+                  // Your onPressed logic here
+                },
+                child: Icon(
+                  Icons.add,
+                ),
+              ),
             ),
           ),
+          SizedBox(height: 20,),
+          Text("Statistics:"),
+          Container(
+            height: 50,
+            width: 50,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Color(0xffFFCB1A),
+            ),
+            child: Center(child: Text("892 h",textAlign: TextAlign.center,)),
+            ),
+          Text("Your total time:"),
+
         ],
       ),
     );
