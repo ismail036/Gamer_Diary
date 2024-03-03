@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gamer_diary/setGameTime.dart';
 
 
 class TimeTracker extends StatelessWidget {
@@ -117,7 +118,7 @@ class _TimeTrackerBodyState extends State<TimeTrackerBody> {
               ),
               child: TextButton(
                 onPressed: () {
-                  // Your onPressed logic here
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => SetGameTime()));
                 },
                 child: Icon(
                   Icons.add,
