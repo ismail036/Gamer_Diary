@@ -6,6 +6,7 @@ import 'package:path/path.dart';
 class UserDatabaseProvider {
   var _userDatabaseName = "gameDb";
   var _userTableName = "gameDictionaryTb";
+  var _charTableName = "characterTb";
   var _version = 1;
   late Database database;
 
@@ -19,6 +20,20 @@ class UserDatabaseProvider {
           await db.execute('''
         CREATE TABLE $_userTableName (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
+          description TEXT
+        );
+        ''');
+          await db.execute('''
+        CREATE TABLE $_charTableName (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          imgPath TEXT,
+          class TEXT,
+          name TEXT,
+          level INTEGER,
+          power INTEGER,
+          dexerity INTEGER,
+          perception INTEGER,
+          intelligence INTEGER,
           description TEXT
         );
         ''');
@@ -73,6 +88,28 @@ VALUES
     }
   }
 
+  Future<void> addCharacterData(Database db,  String imgPath, String classValue, String name, int level, int power, int dexerity, int perception, int intelligence, String description) async {
+    try {
+      await db.execute('''
+      INSERT INTO $_charTableName (imgPath, class, name, level, power, dexerity, perception, intelligence, description)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', [imgPath, classValue, name, level, power, dexerity, perception, intelligence, description]);
+      print('Data added successfully');
+    } catch (e) {
+      print('Error adding data: $e');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getCharacterData(Database db) async {
+    try {
+      List<Map<String, dynamic>> dataList = await db.rawQuery('SELECT * FROM $_charTableName');
+      return dataList;
+    } catch (e) {
+      print('Error retrieving data: $e');
+      return [];
+    }
+  }
+
 
   Future<void> updateData(int rep, int id) async {
     if (database == null) {
@@ -120,8 +157,6 @@ VALUES
     );
   }
 
-
-
   Future<List<Map<String, dynamic>>> getListType(String type) async {
     List<Map<String, dynamic>> userMaps = await database.query(_userTableName);
     List<Map<String, dynamic>> filteredList = [];
@@ -132,6 +167,8 @@ VALUES
     }
     return filteredList;
   }
+
+
 
 
 

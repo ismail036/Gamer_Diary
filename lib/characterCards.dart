@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'dart:io';
 
 import 'characterCardsAdd.dart';
+import 'db_helper.dart';
 
 class CharacterCard extends StatelessWidget {
   const CharacterCard({super.key});
@@ -61,10 +63,39 @@ class CharacterCardBody extends StatefulWidget {
   State<CharacterCardBody> createState() => _CharacterCardBodyState();
 }
 
+List<Map<String, dynamic>> characterData = [];
 class _CharacterCardBodyState extends State<CharacterCardBody> {
+
+  var db = UserDatabaseProvider();
+  Future<void> getData() async {
+    await db.open();
+    // Assuming 'db' is your database object obtained from somewhere
+
+    characterData = await db.getCharacterData(db.database);
+    setState(() {
+
+    });
+    if (characterData.isNotEmpty) {
+      // Process retrieved data
+      for (var character in characterData) {
+        print(character);
+        print(characterData[0]["imgPath"].replaceFirst("File: ", ""));
+        // Print other character details as needed
+      }
+    } else {
+      print('No character data found.');
+    }
+
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    return Container(
+    getData();
+    print(characterData.length);
+    if(characterData.length == 0)
+          return Container(
       margin: EdgeInsets.all(20),
       child: Container(
         child: Column(
@@ -135,6 +166,132 @@ class _CharacterCardBodyState extends State<CharacterCardBody> {
       ),
       ),
     );
+    else
+      return Container(
+        margin: EdgeInsets.all(20),
+        child: Container(
+        child: SingleChildScrollView(
+          child: Column(
+          children: [
+          SizedBox(height: 20,),
+              Center(
+              child: Image.asset(
+              'assets/appBarImage.png',
+              width: 80,
+              ), // Bu kısımda resmi gösterin
+              ),
+              SizedBox(height: 5,),
+            Container(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Wrap(
+                  children: [
+                for(int i = 0 ; i < characterData.length ; i++ )
+                  Container(
+                      width: MediaQuery.of(context).size.width * 0.44,
+                      height: 400,
+                      margin: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                          color: Color(0xffF5F5F5),
+                          borderRadius: BorderRadius.circular(20)
+                      ),
+                      child: Column(
+                        children: [
+                             SizedBox(height: 10,),
+                             Image(image: FileImage(File(characterData[i]["imgPath"].replaceFirst("File: '", "").replaceFirst("'", ""))),
+                               width: MediaQuery.of(context).size.width * 0.35,
+                               height: 120,
+                             ),
+                             SizedBox(height: 5,),
+                             Text(characterData[i]["name"]),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                               child: Row(
+                                 children: [
+                                   SizedBox(width: 5,),
+                                   Column(
+                                     children: [
+                                       Text(characterData[i]["class"].toString()),
+                                       SizedBox(height: 10,),
+                                       Text(characterData[i]["level"].toString())
+                                     ],
+                                   ),
+                                   SizedBox(width: 5,),
+                                   Container(
+                                     width: 2,
+                                     height: 80,
+                                     color: Colors.grey,
+                                   ),
+                                   Column(
+                                     children: [
+                                       Row(
+                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                         children: [
+                                           Text("Power                "),
+                                           Text(characterData[i]["power"].toString(),
+                                           ),
+                                         ],
+                                       ),
+                                       Row(
+                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                         children: [
+                                           Text("Dexerity             "),
+                                           Text(characterData[i]["dexerity"].toString(),
+                                           ),
+                                         ],
+                                       ),
+                                       Row(
+                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                         children: [
+                                           Text("Perception        "),
+                                           Text(characterData[i]["perception"].toString(),
+                                           ),
+                                         ],
+                                       ),
+                                       Row(
+                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                         children: [
+                                           Text("Intelligence       "),
+                                           Text(characterData[i]["intelligence"].toString(),
+                                           ),
+                                         ],
+                                       ),
+                                       SizedBox(height: 5,),
+                                       ],
+                                   ),
+                                 ],
+                               ),
+                             ),
+                          SizedBox(height: 5,),
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.40,
+                            height: 2,
+                            color: Colors.grey,
+                          ),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  Text(characterData[i]["description"])
+                                ],
+                              ),
+                            ),
+                          )
+                        ]
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          
+          
+            ]
+              ),
+        ),
+      ),
+    );
+
   }
 }
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gamer_diary/db_helper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -46,20 +47,36 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
   double _currentSliderValuedexterity = 0;
   double _currentSliderValueintelligence = 0;
 
+  var db = UserDatabaseProvider();
+
+  var classValue   = "";
+  var name         = "";
+  var level        = 0;
+  var power        = 0;
+  var dexerity     = 0;
+  var perception   = 0;
+  var intelligence = 0;
+  var description  = "";
+
+
   @override
   Widget build(BuildContext context) {
+
+
+
+    db.open();
 
 
     final picker = ImagePicker();
 
     const List<String> list = <String>['One', 'Two', 'Three', 'Four'];
-
+    var pickedFile;
     Future getImage() async {
-      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
+      pickedFile = await picker.pickImage(source: ImageSource.gallery);
       setState(() {
         if (pickedFile != null) {
           _image = File(pickedFile.path);
+          print(_image.toString());
         } else {
           print('No image selected.');
         }
@@ -69,7 +86,6 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
     }
 
     getImg() {
-      print(_image);
       if(_image != null )
         return Container(
             margin: EdgeInsets.only(top: 10,left: 10),
@@ -106,8 +122,12 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
 
 
     final List<String> genderItems = [
-      'Male',
-      'Female',
+      'Warrior',
+      'Assassin',
+      'Thief',
+      'Archer',
+      'Undead',
+      'Wizard'
     ];
 
     String? selectedValue;
@@ -201,10 +221,13 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
                         return null;
                       },
                       onChanged: (value) {
-                        //Do something when selected item is changed.
+                        setState(() {
+                          classValue = (value).toString();
+                        });
                       },
                       onSaved: (value) {
                         selectedValue = value.toString();
+                        classValue = (value).toString();
                       },
                       buttonStyleData: const ButtonStyleData(
                         padding: EdgeInsets.only(right: 8),
@@ -246,6 +269,11 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
                             border: InputBorder.none,
                             hintText: 'Enter the name',
                           ),
+                          onChanged: (value) {
+                            setState(() {
+                              name  = value; // Update the variable with entered text
+                            });
+                          },
                         ),
                     ),
 
@@ -263,6 +291,7 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
                       onChanged: (double value) {
                         setState(() {
                           _currentSliderValuelevel = value;
+                          level = value.toInt();
                         });
                       },
                     ),
@@ -281,6 +310,7 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
                       onChanged: (double value) {
                         setState(() {
                           _currentSliderValuepower = value;
+                          power = value.toInt();
                         });
                       },
                     ),
@@ -299,6 +329,7 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
                       onChanged: (double value) {
                         setState(() {
                           _currentSliderValuedexterity = value;
+                          dexerity = value.toInt();
                         });
                       },
                     ),
@@ -318,6 +349,7 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
                       onChanged: (double value) {
                         setState(() {
                           _currentSliderValueperception = value;
+                          perception = value.toInt();
                         });
                       },
                     ),
@@ -336,6 +368,7 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
                       onChanged: (double value) {
                         setState(() {
                           _currentSliderValueintelligence = value;
+                          intelligence = value.toInt();
                         });
                       },
                     ),
@@ -359,6 +392,11 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
                           borderSide: BorderSide(color: Color(0xFFE58A00)),
                         ),
                       ),
+                      onChanged: (String value) {
+                        setState(() {
+                          description = value.toString();
+                        });
+                      },
                     ),
 
                     SizedBox(height: 15,),
@@ -380,6 +418,8 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
                         SizedBox(width: 25,),
                         FloatingActionButton(
                           onPressed: () {
+                            db.addCharacterData(db.database, _image.toString() , classValue, name, level, power, dexerity, perception, intelligence, description);
+                            Navigator.of(context).pop();
                           },
                           backgroundColor: Color(0xff1A91FF), // Change color as needed
                           child: Icon(
@@ -392,13 +432,13 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
 
                     SizedBox(height: 15,),
 
-
-
                   ]
-            ),
-          ),
-    );
 
+            ),
+
+          ),
+
+    );
 
   }
 
