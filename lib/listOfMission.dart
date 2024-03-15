@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'MissionAdd.dart';
+import 'db_helper.dart';
 
 class ListOfMission extends StatelessWidget {
   const ListOfMission({super.key});
@@ -59,9 +60,34 @@ class ListOfMissionBody extends StatefulWidget {
   State<ListOfMissionBody> createState() => _ListOfMissionBodyState();
 }
 
+List<Map<String, dynamic>> missionData = [];
 class _ListOfMissionBodyState extends State<ListOfMissionBody> {
+
+
+  var db = UserDatabaseProvider();
+  Future<void> getData() async {
+    await db.open();
+    // Assuming 'db' is your database object obtained from somewhere
+
+    missionData = await db.getMissionData(db.database);
+    setState(() {
+
+    });
+    if (missionData.isNotEmpty) {
+      // Process retrieved data
+      for (var character in missionData) {
+        print(character);
+        // Print other character details as needed
+      }
+    } else {
+      print('No character data found.');
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    getData();
     return Container(
       margin: EdgeInsets.all(20),
       child: Container(
@@ -98,7 +124,7 @@ class _ListOfMissionBodyState extends State<ListOfMissionBody> {
             ),
             Container(
               width: MediaQuery.of(context).size.width*0.5,
-              child: Text("Hold your finger on the card to move it.",
+              child: Text("Hold your finger on the mission card to move it.",
                 textAlign:TextAlign.center,
                 style: TextStyle(
                   fontSize: 15,
@@ -106,7 +132,7 @@ class _ListOfMissionBodyState extends State<ListOfMissionBody> {
                 ),
               ),
             ),
-            Image(image: AssetImage("assets/maskgroup2.png"),
+            Image(image: AssetImage("assets/missionInfo.png"),
               width: 200,
             ),
             Container(

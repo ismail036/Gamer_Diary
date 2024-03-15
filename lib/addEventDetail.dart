@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:wheel_chooser/wheel_chooser.dart';
 
+import 'db_helper.dart';
+
 class AddEventDetail extends StatelessWidget {
   const AddEventDetail({super.key});
 
@@ -47,6 +49,24 @@ class _AddEventBodyState extends State<AddEventBody> {
     Text("December"),
   ];
 
+  var month = "";
+  var day = "";
+  var year = "";
+  var hours = "";
+  var minutes = "";
+
+  var name = "";
+  var description = "";
+
+  Future<void> saveEvent() async {
+    var db = UserDatabaseProvider();
+    var date = month + " " + day + " " + year + " " + hours + " " + minutes;
+    await db.open();
+    await db.addEventData( "The Elder Scrolls Onlines",name, description, date);
+    Navigator.of(context).pop();
+  }
+
+
   List<Widget> dayWidgets = [
 
   ];
@@ -72,7 +92,7 @@ class _AddEventBodyState extends State<AddEventBody> {
   }
 
   void setYears(){
-    for(int i = 2030;i>2010;i--){
+    for(int i = 2025;i>2010;i--){
       yearWidgets.add(
           Text(i.toString())
       );
@@ -80,7 +100,7 @@ class _AddEventBodyState extends State<AddEventBody> {
   }
 
   void setHours(){
-    for(int i = 1;i<25;i++){
+    for(int i = 0;i<24;i++){
       hoursWidgets.add(
           Text(i.toString())
       );
@@ -88,7 +108,7 @@ class _AddEventBodyState extends State<AddEventBody> {
   }
 
   void setMinutes(){
-    for(int i = 1;i<61;i++){
+    for(int i = 0;i<60;i++){
       minutesWidgets.add(
           Text(i.toString())
       );
@@ -134,6 +154,13 @@ class _AddEventBodyState extends State<AddEventBody> {
                     borderSide: BorderSide(color: Color(0xFFE58A00)),
                   ),
                 ),
+
+                  onChanged: (value) {
+                    setState(() {
+                      name =
+                          value; // Update the gameName variable with the entered text
+                    });
+                  }
               ),
 
               SizedBox(height: 10,),
@@ -154,6 +181,15 @@ class _AddEventBodyState extends State<AddEventBody> {
                     borderSide: BorderSide(color: Color(0xFFE58A00)),
                   ),
                 ),
+
+
+                  onChanged: (value) {
+                    setState(() {
+                      description =
+                          value; // Update the gameName variable with the entered text
+                    });
+                  }
+
               ),
 
               SizedBox(height: 20,),
@@ -169,7 +205,7 @@ class _AddEventBodyState extends State<AddEventBody> {
                     width: 100,
                     height: 100,
                     child: WheelChooser.custom(
-                      onValueChanged: (a) => print(a),
+                      onValueChanged: (a) => month = a,
                       children: monthWidgets
                     ),
                   ),
@@ -178,7 +214,7 @@ class _AddEventBodyState extends State<AddEventBody> {
                     width: 100,
                     height: 100,
                     child: WheelChooser.custom(
-                      onValueChanged: (a) => print(a),
+                      onValueChanged: (a) => day = a,
                       children: dayWidgets,
                     ),
                   ),
@@ -187,7 +223,7 @@ class _AddEventBodyState extends State<AddEventBody> {
                     width: 100,
                     height: 100,
                     child: WheelChooser.custom(
-                      onValueChanged: (a) => print(a),
+                      onValueChanged: (a) => year = a,
                       children: yearWidgets,
                     ),
                   ),
@@ -205,7 +241,7 @@ class _AddEventBodyState extends State<AddEventBody> {
                     width: 100,
                     height: 100,
                     child: WheelChooser.custom(
-                      onValueChanged: (a) => print(a),
+                      onValueChanged: (a) => hours = a,
                       children: hoursWidgets,
                     ),
                   ),
@@ -214,7 +250,7 @@ class _AddEventBodyState extends State<AddEventBody> {
                     width: 100,
                     height: 100,
                     child: WheelChooser.custom(
-                      onValueChanged: (a) => print(a),
+                      onValueChanged: (a) => minutes = a,
                       children: minutesWidgets,
                     ),
                   ),
@@ -241,6 +277,7 @@ class _AddEventBodyState extends State<AddEventBody> {
                   SizedBox(width: 25,),
                   FloatingActionButton(
                     onPressed: () {
+                      saveEvent();
                     },
                     backgroundColor: Color(0xff1A91FF), // Change color as needed
                     child: Icon(

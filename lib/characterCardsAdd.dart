@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -8,8 +10,10 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
+
 class CharacterCardsAdd extends StatelessWidget {
-  const CharacterCardsAdd({super.key});
+  CharacterCardsAdd({super.key});
+  static int id = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +42,7 @@ class CharacterCardsAddBody extends StatefulWidget {
   State<CharacterCardsAddBody> createState() => _CharacterCardsAddBodyState();
 }
 
+List<Map<String, dynamic>> characterData = [];
 class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
 
   File? _image;
@@ -50,6 +55,7 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
   var db = UserDatabaseProvider();
 
   var classValue   = "";
+  var defaultValue = "";
   var name         = "";
   var level        = 0;
   var power        = 0;
@@ -58,9 +64,76 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
   var intelligence = 0;
   var description  = "";
 
+  TextEditingController _controllerName = TextEditingController(text: '');
+  TextEditingController _controllerDescription = TextEditingController(text: '');
+  bool isChecked = false;
 
   @override
   Widget build(BuildContext context) {
+
+
+    var db = UserDatabaseProvider();
+    Future<void> getData() async {
+      await db.open();
+      // Assuming 'db' is your database object obtained from somewhere
+
+      characterData = await db.getCharacterData(db.database);
+      setState(() {
+
+      });
+      if (characterData.isNotEmpty) {
+        // Process retrieved data
+        for (var character in characterData) {
+
+        }
+      } else {
+        print('No character data found.');
+      }
+    }
+
+  /*  id INTEGER PRIMARY KEY AUTOINCREMENT,
+    imgPath TEXT,
+    class TEXT,
+    name TEXT,
+    level INTEGER,
+    power INTEGER,
+    dexerity INTEGER,
+    perception INTEGER,
+    intelligence INTEGER,
+    description TEXT */
+
+
+
+    Future<void> check() async {
+      if(CharacterCardsAdd.id != 0 && isChecked == false){
+        await getData();
+        print(CharacterCardsAdd.id);
+        print(characterData[CharacterCardsAdd.id - 1]["level"]);
+        _controllerDescription = TextEditingController(text: characterData[CharacterCardsAdd.id - 1]["description"]);
+        _controllerName = TextEditingController(text: characterData[CharacterCardsAdd.id - 1]["name"]);
+        _currentSliderValuelevel = characterData[CharacterCardsAdd.id - 1]["level"].toDouble();
+        _currentSliderValuepower = characterData[CharacterCardsAdd.id - 1]["power"].toDouble();
+        _currentSliderValuedexterity = characterData[CharacterCardsAdd.id - 1]["dexerity"].toDouble();
+        _currentSliderValueperception = characterData[CharacterCardsAdd.id - 1]["perception"].toDouble();
+        _currentSliderValueintelligence = characterData[CharacterCardsAdd.id - 1]["intelligence"].toDouble();
+        defaultValue = characterData[CharacterCardsAdd.id - 1]["class"];
+        print(characterData[CharacterCardsAdd.id - 1]["imgPath"]);
+        File imageFile = File(characterData[CharacterCardsAdd.id - 1]["imgPath"].replaceFirst("File: '", "").replaceFirst("'", ""));
+        _image = imageFile;
+        isChecked = true;
+
+        classValue   = defaultValue;
+        name         = _controllerName.text;
+        level      =   _currentSliderValuelevel.toInt();
+        power         =  _currentSliderValuepower.toInt();
+        dexerity      = _currentSliderValuedexterity.toInt();
+        perception    =  _currentSliderValueperception.toInt();
+        intelligence  = _currentSliderValueintelligence.toInt();
+        description   = _controllerDescription.text;
+      }
+    }
+
+    check();
 
 
 
@@ -187,6 +260,7 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
 
 
                     DropdownButtonFormField2<String>(
+                      value: defaultValue,
                       isExpanded: true,
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(vertical: 16),
@@ -265,6 +339,7 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: TextField(
+                          controller: _controllerName,
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Enter the name',
@@ -381,6 +456,7 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
 
 
                     TextField(
+                      controller: _controllerDescription,
                       maxLines: 4,
                       style: TextStyle(color: Color(0xFFE58A00)),
                       decoration: InputDecoration(
@@ -418,7 +494,11 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
                         SizedBox(width: 25,),
                         FloatingActionButton(
                           onPressed: () {
-                            db.addCharacterData(db.database, _image.toString() , classValue, name, level, power, dexerity, perception, intelligence, description);
+                            if(CharacterCardsAdd.id == 0){
+                              db.addCharacterData(db.database, _image.toString() , classValue, name, level, power, dexerity, perception, intelligence, description);
+                            }else{
+                              db.updateCharacterData(db.database, CharacterCardsAdd.id, _image.toString(), classValue, name, level, power, dexerity, perception, intelligence, description);
+                            }
                             Navigator.of(context).pop();
                           },
                           backgroundColor: Color(0xff1A91FF), // Change color as needed

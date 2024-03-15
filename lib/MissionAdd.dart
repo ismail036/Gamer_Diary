@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+
+import 'db_helper.dart';
 
 class MissionAdd extends StatelessWidget {
   const MissionAdd({super.key});
@@ -33,9 +36,19 @@ class MissionAddBody extends StatefulWidget {
 }
 
 class _MissionAddBodyState extends State<MissionAddBody> {
-
+  bool _visibility = false;
   bool isChecked = false;
   double _currentSliderValueintelligence = 0;
+  var gameName = "";
+  var description = "";
+  var purpose = "";
+
+
+  Future<void> saveMissinon() async {
+    var db = UserDatabaseProvider();
+    await db.open();
+    await db.addMissionData(gameName, description, isChecked, _currentSliderValueintelligence.toInt() , purpose);
+  }
 
   Color getColor(Set<MaterialState> states) {
     const Set<MaterialState> interactiveStates = <MaterialState>{
@@ -88,6 +101,12 @@ class _MissionAddBodyState extends State<MissionAddBody> {
                   border: InputBorder.none,
                   hintText: 'game title..',
                 ),
+                onChanged: (value) {
+                  setState(() {
+                    gameName =
+                        value; // Update the gameName variable with the entered text
+                  });
+                }
               ),
             ),
 
@@ -110,6 +129,12 @@ class _MissionAddBodyState extends State<MissionAddBody> {
                   borderSide: BorderSide(color: Color(0xFFE58A00)),
                 ),
               ),
+                onChanged: (value) {
+                  setState(() {
+                    description =
+                        value; // Update the gameName variable with the entered text
+                  });
+                }
             ),
 
             SizedBox(height: 10,),
@@ -129,6 +154,7 @@ class _MissionAddBodyState extends State<MissionAddBody> {
                   onChanged: (bool? value) {
                     setState(() {
                       isChecked = value!;
+                      _visibility = isChecked;
                     });
                   },
                 ),
@@ -137,44 +163,60 @@ class _MissionAddBodyState extends State<MissionAddBody> {
 
             SizedBox(height: 10,),
 
-            Text("Enter a number",
-              textAlign: TextAlign.left,
-            ),
 
-            Slider(
-              value: _currentSliderValueintelligence,
-              max: 100,
-              divisions: 100,
-              label: _currentSliderValueintelligence.round().toString(),
-              onChanged: (double value) {
-                setState(() {
-                  _currentSliderValueintelligence = value;
-                });
-              },
-            ),
+            Visibility(
+              visible: _visibility,
+              child: Column(
+                children: [
 
-            SizedBox(height: 10,),
+                  Text("Enter a number",
+                    textAlign: TextAlign.left,
+                  ),
 
-            Text("Enter what is the purpose of the number",
-              textAlign: TextAlign.left,
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Color(0xFFE58A00), // #E58A00 in hex
-                  width: 1.0, // 1px
-                ),
-                borderRadius: BorderRadius.circular(15),
+                  Slider(
+                    value: _currentSliderValueintelligence,
+                    max: 100,
+                    divisions: 100,
+                    label: _currentSliderValueintelligence.round().toString(),
+                    onChanged: (double value) {
+                      setState(() {
+                        _currentSliderValueintelligence = value;
+                      });
+                    },
+                  ),
+
+                  SizedBox(height: 10,),
+
+                  Text("Enter what is the purpose of the number",
+                    textAlign: TextAlign.left,
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Color(0xFFE58A00), // #E58A00 in hex
+                        width: 1.0, // 1px
+                      ),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'purpose of the number...',
+                      ),
+                        onChanged: (value) {
+                          setState(() {
+                            purpose =
+                                value; // Update the gameName variable with the entered text
+                          });
+                        }
+                    ),
+                  ),
+                ],
               ),
-              child: TextField(
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'purpose of the number...',
-                ),
-              ),
             ),
+
 
             SizedBox(height: 100,),
 
@@ -194,6 +236,7 @@ class _MissionAddBodyState extends State<MissionAddBody> {
                 SizedBox(width: 25,),
                 FloatingActionButton(
                   onPressed: () {
+                    saveMissinon();
                   },
                   backgroundColor: Color(0xff1A91FF), // Change color as needed
                   child: Icon(

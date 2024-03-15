@@ -78,22 +78,19 @@ class _CharacterCardBodyState extends State<CharacterCardBody> {
     if (characterData.isNotEmpty) {
       // Process retrieved data
       for (var character in characterData) {
-        print(character);
-        print(characterData[0]["imgPath"].replaceFirst("File: ", ""));
-        // Print other character details as needed
+
       }
     } else {
       print('No character data found.');
     }
-
-
   }
+
+
 
 
   @override
   Widget build(BuildContext context) {
     getData();
-    print(characterData.length);
     if(characterData.length == 0)
           return Container(
       margin: EdgeInsets.all(20),
@@ -187,99 +184,130 @@ class _CharacterCardBodyState extends State<CharacterCardBody> {
                 child: Wrap(
                   children: [
                 for(int i = 0 ; i < characterData.length ; i++ )
-                  Container(
-                      width: MediaQuery.of(context).size.width * 0.44,
-                      height: 400,
-                      margin: EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                          color: Color(0xffF5F5F5),
-                          borderRadius: BorderRadius.circular(20)
-                      ),
-                      child: Column(
-                        children: [
-                             SizedBox(height: 10,),
-                             Image(image: FileImage(File(characterData[i]["imgPath"].replaceFirst("File: '", "").replaceFirst("'", ""))),
-                               width: MediaQuery.of(context).size.width * 0.35,
-                               height: 120,
-                             ),
-                             SizedBox(height: 5,),
-                             Text(characterData[i]["name"]),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                               child: Row(
-                                 children: [
-                                   SizedBox(width: 5,),
-                                   Column(
+                  GestureDetector(
+                    onLongPress: (){
+                      print("basıdı");
+            },
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.44,
+                          height: 400,
+                          margin: EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                              color: Color(0xffF5F5F5),
+                              borderRadius: BorderRadius.circular(20)
+                          ),
+                          child: Column(
+                            children: [
+                                 SizedBox(height: 10,),
+                                 Image(image: FileImage(File(characterData[i]["imgPath"].replaceFirst("File: '", "").replaceFirst("'", ""))),
+                                   width: MediaQuery.of(context).size.width * 0.35,
+                                   height: 120,
+                                 ),
+                                 SizedBox(height: 5,),
+                                 Text(characterData[i]["name"]),
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                   child: Row(
                                      children: [
-                                       Text(characterData[i]["class"].toString()),
-                                       SizedBox(height: 10,),
-                                       Text(characterData[i]["level"].toString())
+                                       SizedBox(width: 5,),
+                                       Column(
+                                         children: [
+                                           Text(characterData[i]["class"].toString()),
+                                           SizedBox(height: 10,),
+                                           Text(characterData[i]["level"].toString())
+                                         ],
+                                       ),
+                                       SizedBox(width: 5,),
+                                       Container(
+                                         width: 2,
+                                         height: 80,
+                                         color: Colors.grey,
+                                       ),
+                                       Column(
+                                         children: [
+                                           Row(
+                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                             children: [
+                                               Text("Power           "),
+                                               Text(characterData[i]["power"].toString(),
+                                               ),
+                                             ],
+                                           ),
+                                           Row(
+                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                             children: [
+                                               Text("Dexerity        "),
+                                               Text(characterData[i]["dexerity"].toString(),
+                                               ),
+                                             ],
+                                           ),
+                                           Row(
+                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                             children: [
+                                               Text("Perception    "),
+                                               Text(characterData[i]["perception"].toString(),
+                                               ),
+                                             ],
+                                           ),
+                                           Row(
+                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                             children: [
+                                               Text("Intelligence   "),
+                                               Text(characterData[i]["intelligence"].toString(),
+                                               ),
+                                             ],
+                                           ),
+                                           SizedBox(height: 5,),
+                                           ],
+                                       ),
                                      ],
                                    ),
-                                   SizedBox(width: 5,),
-                                   Container(
-                                     width: 2,
-                                     height: 80,
-                                     color: Colors.grey,
-                                   ),
-                                   Column(
-                                     children: [
-                                       Row(
-                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                         children: [
-                                           Text("Power                "),
-                                           Text(characterData[i]["power"].toString(),
-                                           ),
-                                         ],
-                                       ),
-                                       Row(
-                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                         children: [
-                                           Text("Dexerity             "),
-                                           Text(characterData[i]["dexerity"].toString(),
-                                           ),
-                                         ],
-                                       ),
-                                       Row(
-                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                         children: [
-                                           Text("Perception        "),
-                                           Text(characterData[i]["perception"].toString(),
-                                           ),
-                                         ],
-                                       ),
-                                       Row(
-                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                         children: [
-                                           Text("Intelligence       "),
-                                           Text(characterData[i]["intelligence"].toString(),
-                                           ),
-                                         ],
-                                       ),
-                                       SizedBox(height: 5,),
-                                       ],
-                                   ),
-                                 ],
-                               ),
-                             ),
-                          SizedBox(height: 5,),
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.40,
-                            height: 2,
-                            color: Colors.grey,
-                          ),
-                          Expanded(
-                            child: SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  Text(characterData[i]["description"])
-                                ],
+                                 ),
+                              SizedBox(height: 5,),
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.40,
+                                height: 2,
+                                color: Colors.grey,
                               ),
-                            ),
-                          )
-                        ]
-                      ),
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      Text(characterData[i]["description"])
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ]
+                          ),
+                        ),
+
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.45,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(onPressed: (){
+                                var id = characterData[i]["id"];
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => CharacterCardsAdd()));
+                                CharacterCardsAdd.id = id;
+                              }, icon: Icon(Icons.edit_note_sharp,
+                                color: Colors.blue,
+                               ),
+                              ),
+
+
+
+                              IconButton(onPressed: (){}, icon: Icon(Icons.delete)),
+                            ],
+                          ),
+                          ),
+
+          ],
                     ),
+                  ),
                   ],
                 ),
               ),

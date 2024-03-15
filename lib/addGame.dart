@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'db_helper.dart';
+
 
 class AddGame extends StatelessWidget {
   const AddGame({super.key});
@@ -32,6 +34,16 @@ class AddGameBody extends StatefulWidget {
 }
 
 class _AddGameBodyState extends State<AddGameBody> {
+
+  var gameName = "";
+
+  Future<void> saveGame() async {
+    var db = UserDatabaseProvider();
+    await db.open();
+    await db.addGameData(gameName);
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -60,7 +72,16 @@ class _AddGameBodyState extends State<AddGameBody> {
             border: InputBorder.none,
             hintText: 'Enter the name',
           ),
+            onChanged: (value) {
+              setState(() {
+                gameName =
+                    value; // Update the gameName variable with the entered text
+              });
+            }
         ),
+
+
+
       ),
         SizedBox(height: 350,),
         Row(
@@ -79,6 +100,7 @@ class _AddGameBodyState extends State<AddGameBody> {
     SizedBox(width: 25,),
     FloatingActionButton(
     onPressed: () {
+      saveGame();
     },
     backgroundColor: Color(0xff1A91FF), // Change color as needed
     child: Icon(

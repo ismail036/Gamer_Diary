@@ -7,6 +7,12 @@ class UserDatabaseProvider {
   var _userDatabaseName = "gameDb";
   var _userTableName = "gameDictionaryTb";
   var _charTableName = "characterTb";
+  var _timeTableName = "timeTb";
+  var _missionTable = "missionTb";
+  var _gameTb = "gameTb";
+  var _eventTb = "eventTb";
+  var _eventMission = "eventMissionTb";
+
   var _version = 1;
   late Database database;
 
@@ -37,6 +43,47 @@ class UserDatabaseProvider {
           description TEXT
         );
         ''');
+          await db.execute('''
+        CREATE TABLE $_timeTableName (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT,
+          time INTEGER,
+          remain INTEGER
+        );
+        ''');
+            await db.execute('''
+          CREATE TABLE $_missionTable (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            description TEXT,
+            numeric BOOLEAN,
+            number INTEGER,
+            purpose TEXT
+          );
+          ''');
+          await db.execute('''
+          CREATE TABLE $_gameTb (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT
+          );
+          ''');
+          await db.execute('''
+          CREATE TABLE $_eventTb (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            gameName TEXT,
+            name TEXT,
+            description TEXT, 
+            dateTime TEXT
+          );
+          ''');
+          await db.execute('''
+          CREATE TABLE $_eventMission (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            gameName TEXT,
+            imgPath TEXT,
+            mission TEXT
+          );
+          ''');
           await db.execute(
               '''
               INSERT INTO $_userTableName (description) 
@@ -58,6 +105,130 @@ VALUES
     } catch (e) {
       print("Error opening database: $e");
     }
+  }
+
+  Future<void> addGameData(String name) async {
+    // Ensure that the database is already opened
+    if (database == null) {
+      throw Exception("Database is not open!");
+    }
+
+    try {
+      // Insert data into the database
+      await database.insert(
+        _gameTb,
+        {
+          'name': name,
+        },
+      );
+      print('Data added successfully');
+    } catch (e) {
+      print('Failed to add data: $e');
+      // Handle error
+    }
+  }
+
+  Future<void> addEventData(String gameName ,  String name,String description , String date) async {
+    // Ensure that the database is already opened
+    if (database == null) {
+      throw Exception("Database is not open!");
+    }
+
+    try {
+      // Insert data into the database
+      await database.insert(
+        _eventTb,
+        {
+          'gameName'  : gameName,
+          'name'        : name,
+          'description' : description ,
+          'dateTime'    : date
+        },
+      );
+      print('Data added successfully');
+    } catch (e) {
+      print('Failed to add data: $e');
+      // Handle error
+    }
+  }
+
+  Future<void> addEventMissionData(String gameName , String imgPath,String description) async {
+    // Ensure that the database is already opened
+    if (database == null) {
+      throw Exception("Database is not open!");
+    }
+
+    try {
+      // Insert data into the database
+      await database.insert(
+        _eventMission,
+        {
+          'gameName'  : gameName,
+          'imgPath'   : imgPath,
+          'mission'   : description ,
+        },
+      );
+      print('Data added successfully');
+    } catch (e) {
+      print('Failed to add data: $e');
+      // Handle error
+    }
+  }
+
+  Future<void> addMissionData(String name, String description, bool numeric ,int number, String purpose) async {
+    // Ensure that the database is already opened
+    if (database == null) {
+      throw Exception("Database is not open!");
+    }
+
+
+    try {
+      // Insert data into the database
+      await database.insert(
+        _missionTable,
+        {
+          'name': name,
+          'description': description,
+          'numeric': numeric,
+          'number' : number,
+          'purpose' : purpose
+        },
+      );
+      print('Data added successfully');
+    } catch (e) {
+      print('Failed to add data: $e');
+      // Handle error
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getMissionData(Database db) async {
+
+    List<Map<String, dynamic>> result = await db.query(_missionTable);
+
+    return result;
+  }
+
+
+  Future<void> addTimeData(Database db, String name, int time, int remain) async {
+    // Define the table name
+
+    // Prepare the SQL statement
+    String sql = '''
+    INSERT INTO $_timeTableName (name, time, remain)
+    VALUES (?, ?, ?)
+  ''';
+
+    // Execute the SQL statement with parameters
+    await db.rawInsert(sql, [name, time, remain]);
+  }
+
+  Future<List<Map<String, dynamic>>> getTimeData(Database db) async {
+    // Define the table name
+
+    // Execute the SQL statement to get data
+    List<Map<String, dynamic>> result = await db.query(_timeTableName);
+
+    return result;
   }
 
 
@@ -97,6 +268,40 @@ VALUES
       print('Data added successfully');
     } catch (e) {
       print('Error adding data: $e');
+    }
+  }
+
+
+  Future<void> updateCharacterData(Database db, int id, String imgPath, String classValue, String name, int level, int power, int dexerity, int perception, int intelligence, String description) async {
+    try {
+      await db.execute('''
+      UPDATE $_charTableName 
+      SET imgPath = ?, 
+          class = ?, 
+          name = ?, 
+          level = ?, 
+          power = ?, 
+          dexerity = ?, 
+          perception = ?, 
+          intelligence = ?, 
+          description = ?
+      WHERE id = ?
+    ''', [imgPath, classValue, name, level, power, dexerity, perception, intelligence, description, id]);
+      print('Data updated successfully');
+    } catch (e) {
+      print('Error updating data: $e');
+    }
+  }
+
+  Future<void> deleteCharacter(Database db, int id) async {
+    try {
+      await db.execute('''
+      DELETE FROM $_charTableName 
+      WHERE id = ?
+    ''', [id]);
+      print('Data deleted successfully');
+    } catch (e) {
+      print('Error deleting data: $e');
     }
   }
 

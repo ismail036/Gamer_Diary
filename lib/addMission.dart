@@ -7,6 +7,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
+import 'db_helper.dart';
+
 class AddMission extends StatelessWidget {
   const AddMission({super.key});
 
@@ -54,6 +56,17 @@ class _AddMissionBodyState extends State<AddMissionBody> {
 
     print(_image);
   }
+
+  var description = "";
+
+
+  Future<void> saveMissinon() async {
+    var db = UserDatabaseProvider();
+    await db.open();
+    await db.addEventMissionData("The Elder Scrolls Onlines", _image.toString(),description);
+    Navigator.of(context).pop();
+  }
+
 
   getImg() {
     print(_image);
@@ -162,9 +175,14 @@ class _AddMissionBodyState extends State<AddMissionBody> {
             borderSide: BorderSide(color: Color(0xFFE58A00)),
           ),
         ),
+
+        onChanged: (value) {
+          setState(() {
+            description =
+                value; // Update the gameName variable with the entered text
+          });
+        }
       ),
-
-
 
       SizedBox(height: 240,),
       Row(
@@ -183,6 +201,7 @@ class _AddMissionBodyState extends State<AddMissionBody> {
           SizedBox(width: 25,),
           FloatingActionButton(
             onPressed: () {
+              saveMissinon();
             },
             backgroundColor: Color(0xff1A91FF), // Change color as needed
             child: Icon(

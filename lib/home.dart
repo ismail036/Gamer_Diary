@@ -203,6 +203,7 @@ class _HomeBodyState extends State<HomeBody> {
           ),
         ),
 
+
           Visibility(
             visible: _settingVisible,
             child: Opacity(
