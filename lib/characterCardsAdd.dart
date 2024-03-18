@@ -10,6 +10,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
+import 'home.dart';
+
 
 class CharacterCardsAdd extends StatelessWidget {
   CharacterCardsAdd({super.key});
@@ -55,7 +57,7 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
   var db = UserDatabaseProvider();
 
   var classValue   = "";
-  var defaultValue = "";
+  var defaultValue;
   var name         = "";
   var level        = 0;
   var power        = 0;
@@ -254,7 +256,9 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
                     ),
 
                     SizedBox(height: 20,),
-                    Text("Choose a character class",
+                    Home.lang == "en" ? Text("Choose a character class",
+                      textAlign: TextAlign.left,
+                    ) : Text("Выбор класса персонажа",
                       textAlign: TextAlign.left,
                     ),
 
@@ -272,8 +276,11 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
                         hintStyle: TextStyle(fontSize: 14, color: Color(0xffE58A00)),
                         // Add more decoration..
                       ),
-                      hint: const Text(
+                      hint: Home.lang == "en" ? Text(
                         "Choose a character class",
+                        style: TextStyle(fontSize: 14),
+                      )  : Text(
+                        "Выбор класса персонажа",
                         style: TextStyle(fontSize: 14),
                       ),
                       items: genderItems
@@ -325,7 +332,9 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
 
                     SizedBox(height: 15,),
 
-                    Text("Enter the name",
+                    Home.lang == "en" ?  Text("Enter the name",
+                      textAlign: TextAlign.left,
+                    ) : Text("Введите имя персонажа",
                       textAlign: TextAlign.left,
                     ),
                     Container(
@@ -338,11 +347,22 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
                           ),
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        child: TextField(
+                        child:  Home.lang == "en" ?   TextField(
                           controller: _controllerName,
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: 'Enter the name',
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              name  = value; // Update the variable with entered text
+                            });
+                          },
+                        ) : TextField(
+                          controller: _controllerName,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Введите имя персонажа',
                           ),
                           onChanged: (value) {
                             setState(() {
@@ -354,7 +374,9 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
 
                     SizedBox(height: 15,),
 
-                    Text("Enter the character level",
+                    Home.lang == "en" ?   Text("Enter the character level",
+                      textAlign: TextAlign.left,
+                    ) : Text("Введите уровень персонажа",
                       textAlign: TextAlign.left,
                     ),
 
@@ -373,7 +395,9 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
 
                     SizedBox(height: 15,),
 
-                    Text("Enter the character power",
+                    Home.lang == "en" ?  Text("Enter the character power",
+                      textAlign: TextAlign.left,
+                    ) : Text("EВведите силу персонажа",
                       textAlign: TextAlign.left,
                     ),
 
@@ -392,7 +416,9 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
 
                     SizedBox(height: 15,),
 
-                    Text("Enter the character dexterity",
+                    Home.lang == "en" ?  Text("Enter the character dexterity",
+                      textAlign: TextAlign.left,
+                    ) : Text("Введите ловкость персонажа",
                       textAlign: TextAlign.left,
                     ),
 
@@ -412,9 +438,11 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
 
                     SizedBox(height: 15,),
 
-                    Text("Enter the character perception",
+                    Home.lang == "en" ?   Text("Enter the character perception",
                       textAlign: TextAlign.left,
-                    ),
+                    ) : Text("Введите восприятие персонажа",
+                      textAlign: TextAlign.left,
+                    ) ,
 
                     Slider(
                       value: _currentSliderValueperception,
@@ -431,9 +459,11 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
 
                     SizedBox(height: 15,),
 
-                    Text("Enter the character intelligence",
+                    Home.lang == "en" ?  Text("Enter the character intelligence",
                       textAlign: TextAlign.left,
-                    ),
+                    ) :Text("Введите интеллект персонажа",
+                      textAlign: TextAlign.left,
+                    )  ,
 
                     Slider(
                       value: _currentSliderValueintelligence,
@@ -450,7 +480,9 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
 
                     SizedBox(height: 15,),
 
-                    Text("Write a description for the character",
+                    Home.lang == "en" ?  Text("Write a description for the character",
+                      textAlign: TextAlign.left,
+                    ) : Text("Напишите описание персонажа",
                       textAlign: TextAlign.left,
                     ),
 
@@ -459,8 +491,16 @@ class _CharacterCardsAddBodyState extends State<CharacterCardsAddBody> {
                       controller: _controllerDescription,
                       maxLines: 4,
                       style: TextStyle(color: Color(0xFFE58A00)),
-                      decoration: InputDecoration(
+                      decoration: Home.lang == "en" ?  InputDecoration(
                         hintText: "Enter your text",
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xFFE58A00)),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xFFE58A00)),
+                        ),
+                      ) : InputDecoration(
+                        hintText: "Описание персонажа...",
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Color(0xFFE58A00)),
                         ),

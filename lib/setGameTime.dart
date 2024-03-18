@@ -65,7 +65,7 @@ class _SetGameTimeBodyState extends State<SetGameTimeBody> {
   Future<void> saveTime() async {
     var db = UserDatabaseProvider();
     await db.open();
-    await db.addTimeData(db.database,gameName , currValueHour * 60 + currValueMinutes, 0);
+    await db.addTimeData(db.database,gameName , currValueHour * 60 * 60 + currValueMinutes * 60, 0);
   }
 
   @override

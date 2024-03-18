@@ -12,6 +12,8 @@ final _key = GlobalKey<ExpandableFabState>();
 
 class Home extends StatelessWidget {
   const Home({super.key});
+  
+  static var lang = "en";
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +83,7 @@ class _HomeBodyState extends State<HomeBody> {
                             width: MediaQuery.of(context).size.width * 0.35,),
                           Container(
                             width: MediaQuery.of(context).size.width * 0.30,
-                            child: Text("Dictionary of gaming slang",textAlign: TextAlign.center),
+                            child: Home.lang == "en" ?  Text("Dictionary of gaming slang",textAlign: TextAlign.center) :Text("Словарь игрового сленга",textAlign: TextAlign.center) ,
                           )
                     
                         ],
@@ -109,7 +111,7 @@ class _HomeBodyState extends State<HomeBody> {
                           SizedBox(height: 10,),
                           Container(
                             width: MediaQuery.of(context).size.width * 0.30,
-                            child: Text("Character cards",textAlign: TextAlign.center),
+                            child:Home.lang == "en" ?  Text("Character cards",textAlign: TextAlign.center) : Text("Карточки персонажей",textAlign: TextAlign.center),
                           )
                         ],
                       ),
@@ -137,7 +139,8 @@ class _HomeBodyState extends State<HomeBody> {
                           Container(
                             alignment: Alignment.center,
                             width: MediaQuery.of(context).size.width * 0.30,
-                            child: Text("In-game time tracker",
+                            child: Home.lang == "en" ? Text("In-game time tracker",
+                              textAlign: TextAlign.center,) : Text("Отслеживание игрового времени",
                               textAlign: TextAlign.center,),
                           )
                         ],
@@ -165,7 +168,7 @@ class _HomeBodyState extends State<HomeBody> {
                           SizedBox(height: 10,),
                           Container(
                             width: MediaQuery.of(context).size.width * 0.30,
-                            child: Text("List of missions",textAlign: TextAlign.center),
+                            child: Home.lang == "en" ? Text("List of missions",textAlign: TextAlign.center) : Text("Список миссий",textAlign: TextAlign.center) ,
                           )
                         ],
                       ),
@@ -173,6 +176,7 @@ class _HomeBodyState extends State<HomeBody> {
                   ),
                   GestureDetector(
                     onTap: (){
+                      EventSchedule.isSet = false;
                       Navigator.push(context, MaterialPageRoute(builder: (context) => EventSchedule()));
                     },
                     child: Container(
@@ -192,7 +196,7 @@ class _HomeBodyState extends State<HomeBody> {
                           SizedBox(height: 10,),
                           Container(
                             width: MediaQuery.of(context).size.width * 0.30,
-                            child: Text("Event schedule",textAlign: TextAlign.center),
+                            child: Home.lang == "en" ? Text("Event schedule",textAlign: TextAlign.center) : Text("Расписание ивентов",textAlign: TextAlign.center),
                           ),
                         ],
                       ),
@@ -241,9 +245,16 @@ class _HomeBodyState extends State<HomeBody> {
                         SizedBox(height: 25,),
                         Text("Language"),
                         SizedBox(height: 10,),
-                        Image.asset("assets/en.png"),
+                        
+                        GestureDetector(onTap: (){
+                          Home.lang = "en";
+                        }, child: Container(child: Image.asset("assets/en.png"))),
+                        
                         SizedBox(height: 30,),
-                        Image.asset("assets/ru.png"),
+
+                        GestureDetector(onTap: (){
+                          Home.lang = "ru";
+                        }, child: Container(child: Image.asset("assets/ru.png"))),
                       ],
                     )
                   ],

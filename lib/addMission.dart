@@ -12,6 +12,8 @@ import 'db_helper.dart';
 class AddMission extends StatelessWidget {
   const AddMission({super.key});
 
+  static var gameName = "";
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -40,6 +42,8 @@ class AddMissionBody extends StatefulWidget {
 }
 
 class _AddMissionBodyState extends State<AddMissionBody> {
+
+
   File? _image;
   final picker = ImagePicker();
 
@@ -63,7 +67,7 @@ class _AddMissionBodyState extends State<AddMissionBody> {
   Future<void> saveMissinon() async {
     var db = UserDatabaseProvider();
     await db.open();
-    await db.addEventMissionData("The Elder Scrolls Onlines", _image.toString(),description);
+    await db.addEventMissionData(AddMission.gameName, _image.toString(),description);
     Navigator.of(context).pop();
   }
 
@@ -202,6 +206,7 @@ class _AddMissionBodyState extends State<AddMissionBody> {
           FloatingActionButton(
             onPressed: () {
               saveMissinon();
+              Navigator.of(context).pop();
             },
             backgroundColor: Color(0xff1A91FF), // Change color as needed
             child: Icon(

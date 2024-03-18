@@ -3,12 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import 'db_helper.dart';
+import 'home.dart';
 
 class MissionAdd extends StatelessWidget {
-  const MissionAdd({super.key});
+  MissionAdd({super.key});
+
+  static var id = 0;
 
   @override
   Widget build(BuildContext context) {
+
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -35,6 +40,7 @@ class MissionAddBody extends StatefulWidget {
   State<MissionAddBody> createState() => _MissionAddBodyState();
 }
 
+List<Map<String, dynamic>> missionData = [];
 class _MissionAddBodyState extends State<MissionAddBody> {
   bool _visibility = false;
   bool isChecked = false;
@@ -43,11 +49,20 @@ class _MissionAddBodyState extends State<MissionAddBody> {
   var description = "";
   var purpose = "";
 
+  var  isChe = false;
+
+
+
 
   Future<void> saveMissinon() async {
     var db = UserDatabaseProvider();
     await db.open();
-    await db.addMissionData(gameName, description, isChecked, _currentSliderValueintelligence.toInt() , purpose);
+
+    if(MissionAdd.id == 0){
+      await db.addMissionData(gameName, description, isChecked, _currentSliderValueintelligence.toInt(), 0, purpose, "In progres");
+    }else{
+      await db.updateMissionData(MissionAdd.id, gameName, description, isChecked, _currentSliderValueintelligence.toInt(), 0, purpose, "In progres");
+    }
   }
 
   Color getColor(Set<MaterialState> states) {
@@ -62,8 +77,63 @@ class _MissionAddBodyState extends State<MissionAddBody> {
     return Color(0xffF5F5F7);
   }
 
+
+  var db = UserDatabaseProvider();
+  Future<void> getData() async {
+    await db.open();
+    // Assuming 'db' is your database object obtained from somewhere
+
+    setState(() async {
+      missionData = await db.getMissionData(db.database);
+    });
+    if (missionData.isNotEmpty) {
+      // Process retrieved data
+      for (var character in missionData) {
+        // Print other character details as needed
+      }
+    } else {
+      print('No character data found.');
+    }
+  }
+
+  TextEditingController _controllerName = TextEditingController(text: '');
+  TextEditingController _controllerDescription = TextEditingController(text: '');
+  TextEditingController _controllerPurpose = TextEditingController(text: '');
+
   @override
   Widget build(BuildContext context) {
+    getData();
+
+
+    if(MissionAdd.id != 0 && isChe == false){
+      print(missionData.length);
+      for(int k = 0;k<missionData.length;k++){
+        print(missionData[k]["id"]);
+        if(missionData[k]["id"] == MissionAdd.id){
+            gameName    = missionData[k]["name"];
+            description = missionData[k]["description"];
+            purpose = missionData[k]["purpose"];
+            print(gameName);
+            _currentSliderValueintelligence = missionData[k]["number"].toDouble();
+            setState(() {
+              _controllerName        = TextEditingController(text: gameName);
+              _controllerDescription = TextEditingController(text: description);
+              _controllerPurpose     = TextEditingController(text: purpose);
+            });
+
+            print(gameName);
+
+            if(missionData[k]["numeric"] == 1){
+              isChecked = true;
+              _visibility = true;
+            }
+            isChe = true;
+        }
+      }
+    }
+
+
+
     return Container(
       margin: EdgeInsets.all(20),
       child: SingleChildScrollView(
@@ -83,7 +153,9 @@ class _MissionAddBodyState extends State<MissionAddBody> {
             SizedBox(height: 150,),
 
 
-            Text("Enter the name of the game",
+            Home.lang == "en" ?  Text("Enter the name of the game",
+              textAlign: TextAlign.left,
+            ) : Text("Название игры",
               textAlign: TextAlign.left,
             ),
             Container(
@@ -96,28 +168,44 @@ class _MissionAddBodyState extends State<MissionAddBody> {
                 ),
                 borderRadius: BorderRadius.circular(15),
               ),
-              child: TextField(
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'game title..',
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    gameName =
-                        value; // Update the gameName variable with the entered text
-                  });
-                }
+                child:  Home.lang == "en" ? TextField(
+                  controller: _controllerName,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'game title..',
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      gameName = value;
+                    });
+
+                  },
+                ) : TextField(
+                  controller: _controllerName,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'название игры...',
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      gameName = value;
+                    });
+
+                  },
+                )
               ),
-            ),
 
             SizedBox(height: 15,),
 
-            Text("Write a description of the mission",
+            Home.lang == "en" ?  Text("Write a description of the mission",
+              textAlign: TextAlign.left,
+            ) : Text("Напишите описание миссии",
               textAlign: TextAlign.left,
             ),
 
 
-            TextField(
+            Home.lang == "en" ?  TextField(
+              controller: _controllerDescription,
               maxLines: 4,
               style: TextStyle(color: Color(0xFFE58A00)),
               decoration: InputDecoration(
@@ -130,17 +218,36 @@ class _MissionAddBodyState extends State<MissionAddBody> {
                 ),
               ),
                 onChanged: (value) {
+                setState(() {
+                  description =
+                      value;
+                });// Update the gameName variable with the entered text
+                }
+            ) : TextField(
+                controller: _controllerDescription,
+                maxLines: 4,
+                style: TextStyle(color: Color(0xFFE58A00)),
+                decoration: InputDecoration(
+                  hintText: "Описание миссии...",
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFFE58A00)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFFE58A00)),
+                  ),
+                ),
+                onChanged: (value) {
                   setState(() {
                     description =
-                        value; // Update the gameName variable with the entered text
-                  });
+                        value;
+                  });// Update the gameName variable with the entered text
                 }
             ),
 
             SizedBox(height: 10,),
 
             Center(
-              child: Text("Numeric ?"),
+              child:  Home.lang == "en" ?  Text("Numeric ?") : Text("Числовая?"),
             ),
             Center(
 
@@ -169,7 +276,9 @@ class _MissionAddBodyState extends State<MissionAddBody> {
               child: Column(
                 children: [
 
-                  Text("Enter a number",
+                  Home.lang == "en" ?  Text("Enter a number",
+                    textAlign: TextAlign.left,
+                  ) : Text("Введите число",
                     textAlign: TextAlign.left,
                   ),
 
@@ -187,7 +296,9 @@ class _MissionAddBodyState extends State<MissionAddBody> {
 
                   SizedBox(height: 10,),
 
-                  Text("Enter what is the purpose of the number",
+                  Home.lang == "en" ?   Text("Enter what is the purpose of the number",
+                    textAlign: TextAlign.left,
+                  ) : Text("Введите, для чего предназначен это число",
                     textAlign: TextAlign.left,
                   ),
                   Container(
@@ -200,11 +311,24 @@ class _MissionAddBodyState extends State<MissionAddBody> {
                       ),
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    child: TextField(
+                    child: Home.lang == "en" ?  TextField(
+                      controller: _controllerPurpose,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'purpose of the number...',
                       ),
+                        onChanged: (value) {
+                          setState(() {
+                            purpose =
+                                value; // Update the gameName variable with the entered text
+                          });
+                        }
+                    ) : TextField(
+                        controller: _controllerPurpose,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'назначение числа...',
+                        ),
                         onChanged: (value) {
                           setState(() {
                             purpose =
@@ -237,6 +361,7 @@ class _MissionAddBodyState extends State<MissionAddBody> {
                 FloatingActionButton(
                   onPressed: () {
                     saveMissinon();
+                    Navigator.of(context).pop();
                   },
                   backgroundColor: Color(0xff1A91FF), // Change color as needed
                   child: Icon(

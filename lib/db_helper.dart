@@ -58,7 +58,9 @@ class UserDatabaseProvider {
             description TEXT,
             numeric BOOLEAN,
             number INTEGER,
-            purpose TEXT
+            currnumber INTEGER,
+            purpose TEXT,
+            status TEXT
           );
           ''');
           await db.execute('''
@@ -175,13 +177,11 @@ VALUES
     }
   }
 
-  Future<void> addMissionData(String name, String description, bool numeric ,int number, String purpose) async {
+  Future<void> addMissionData(String name, String description, bool numeric, int number, int currNumber, String purpose, String status) async {
     // Ensure that the database is already opened
     if (database == null) {
       throw Exception("Database is not open!");
     }
-
-
     try {
       // Insert data into the database
       await database.insert(
@@ -189,9 +189,11 @@ VALUES
         {
           'name': name,
           'description': description,
-          'numeric': numeric,
-          'number' : number,
-          'purpose' : purpose
+          'numeric': numeric ? 1 : 0, // Convert boolean to integer for SQLite
+          'number': number,
+          'currnumber': currNumber,
+          'purpose': purpose,
+          'status': status
         },
       );
       print('Data added successfully');
@@ -199,6 +201,75 @@ VALUES
       print('Failed to add data: $e');
       // Handle error
     }
+  }
+
+
+
+  Future<void> updateMissionData(int id, String name, String description, bool numeric, int number, int currNumber, String purpose, String status) async {
+    // Ensure that the database is already opened
+    if (database == null) {
+      throw Exception("Database is not open!");
+    }
+    try {
+      // Update data in the database
+      await database.update(
+        _missionTable,
+        {
+          'name': name,
+          'description': description,
+          'numeric': numeric ? 1 : 0, // Convert boolean to integer for SQLite
+          'number': number,
+          'currnumber': currNumber,
+          'purpose': purpose,
+          'status': status
+        },
+        where: 'id = ?', // Only update the item with matching id
+        whereArgs: [id],
+      );
+      print('Data updated successfully');
+    } catch (e) {
+      print('Failed to update data: $e');
+      // Handle error
+    }
+  }
+
+
+
+  Future<Map<String, dynamic>?> getMissionDataById(Database db, int id) async {
+    List<Map<String, dynamic>> result = await db.query(
+      _missionTable,
+      where: "id = ?",
+      whereArgs: [id],
+    );
+
+    if (result.isNotEmpty) {
+      return result.first;
+    } else {
+      // Handle the case where no mission with the specified ID is found
+      return null;
+    }
+  }
+
+
+  Future<List<Map<String, dynamic>>> getEventScheduleData(Database db) async {
+
+    List<Map<String, dynamic>> result = await db.query(_eventTb);
+
+    return result;
+  }
+
+  Future<List<Map<String, dynamic>>> getGameData(Database db) async {
+
+    List<Map<String, dynamic>> result = await db.query(_gameTb);
+
+    return result;
+  }
+
+  Future<List<Map<String, dynamic>>> getEventMissionData(Database db) async {
+
+    List<Map<String, dynamic>> result = await db.query(_eventMission);
+
+    return result;
   }
 
   Future<List<Map<String, dynamic>>> getMissionData(Database db) async {
@@ -220,6 +291,65 @@ VALUES
 
     // Execute the SQL statement with parameters
     await db.rawInsert(sql, [name, time, remain]);
+  }
+
+
+  Future<void> updateMissionDataById(Database db, int id, int currnumber) async {
+    // Define the table name
+
+    // Prepare the SQL statement
+    String sql = '''
+    UPDATE $_missionTable 
+    SET currnumber = ?
+    WHERE id = ?
+  ''';
+    // Execute the SQL statement with parameters
+    await db.rawUpdate(sql, [currnumber, id]);
+  }
+
+  Future<void> updateMissionStatusDataById(Database db, int id, String status) async {
+    // Define the table name
+
+    // Prepare the SQL statement
+    String sql = '''
+    UPDATE $_missionTable 
+    SET status = ?
+    WHERE id = ?
+  ''';
+    // Execute the SQL statement with parameters
+    await db.rawUpdate(sql, [status, id]);
+  }
+
+  Future<void> deleteMission(Database db, int id) async {
+    try {
+      await db.execute('''
+      DELETE FROM $_missionTable 
+      WHERE id = ?
+    ''', [id]);
+      print('Data deleted successfully');
+    } catch (e) {
+      print('Error deleting data: $e');
+    }
+  }
+
+
+
+
+
+
+
+  Future<void> updateTimeDataById(Database db, int id, int remain) async {
+    // Define the table name
+
+    // Prepare the SQL statement
+    String sql = '''
+    UPDATE $_timeTableName 
+    SET remain = ?
+    WHERE id = ?
+  ''';
+
+    // Execute the SQL statement with parameters
+    await db.rawUpdate(sql, [remain, id]);
   }
 
   Future<List<Map<String, dynamic>>> getTimeData(Database db) async {
@@ -372,14 +502,6 @@ VALUES
     }
     return filteredList;
   }
-
-
-
-
-
-
-
-
 
 
 

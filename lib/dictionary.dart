@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'db_helper.dart';
+import 'home.dart';
 
 class Dictionary extends StatelessWidget {
   const Dictionary({Key? key}) : super(key: key);
@@ -110,7 +111,7 @@ class _DictionaryBodyState extends State<DictionaryBody> {
               ), // Bu kısımda resmi gösterin
             ),
             SizedBox(height: 5,),
-            Text("Dictionary of gaming slang"),
+            Home.lang == "en" ? Text("Dictionary of gaming slang") : Text("Словарь игрового сленга"),
             SizedBox(height: 5,),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,

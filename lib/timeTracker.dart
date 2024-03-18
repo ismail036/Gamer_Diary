@@ -7,6 +7,8 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 import 'db_helper.dart';
+import 'home.dart';
+import 'inGameTimeTracker.dart';
 
 
 class TimeTracker extends StatelessWidget {
@@ -40,8 +42,8 @@ class TimeTrackerBody extends StatefulWidget {
 }
 
 List<Map<String, dynamic>> timeData = [];
+var total = 0.0;
 class _TimeTrackerBodyState extends State<TimeTrackerBody> {
-
   var db = UserDatabaseProvider();
   Future<void> getData() async {
     await db.open();
@@ -52,10 +54,9 @@ class _TimeTrackerBodyState extends State<TimeTrackerBody> {
 
     });
     if (timeData.isNotEmpty) {
-      // Process retrieved data
+      total = 0.0;
       for (var character in timeData) {
-        print(character);
-        // Print other character details as needed
+        total += (character["remain"]);
       }
     } else {
       print('No character data found.');
@@ -158,7 +159,7 @@ class _TimeTrackerBodyState extends State<TimeTrackerBody> {
               ),
             ),
             SizedBox(height: 20,),
-            Text("Statistics:"),
+            Home.lang == "en" ? Text("Statistics:") : Text("Статистика:"),
             Container(
               height: 50,
               width: 50,
@@ -166,9 +167,9 @@ class _TimeTrackerBodyState extends State<TimeTrackerBody> {
                 borderRadius: BorderRadius.circular(20),
                 color: Color(0xffFFCB1A),
               ),
-              child: Center(child: Text("892 h",textAlign: TextAlign.center,)),
+              child: Center(child: Text((total / 60).toInt().toString() + " h ",textAlign: TextAlign.center,)),
               ),
-            Text("Your total time:"),
+            Home.lang == "en" ? Text("Your total time:") : Text("Ваше общее время"),
             SizedBox(height: 25,),
 
             SingleChildScrollView(
@@ -176,34 +177,41 @@ class _TimeTrackerBodyState extends State<TimeTrackerBody> {
               child: Row(
                 children: [
                   for(int i = 0 ; i<timeData.length ; i++)
-                    Container(
-                      width: 110,
-                      margin: EdgeInsets.all(3),
-                      padding: EdgeInsets.symmetric(vertical: 10,horizontal: 15),
-                      decoration: BoxDecoration(
-                        color: Color(0xffFFCB1A),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Column(
-                          children: [
-                            Text(timeData[i]["name"]),
-                            Text(getTime(timeData[i])),
-                            SizedBox(height: 10,),
-                            CircularPercentIndicator(
-                              radius: 45.0,
-                              lineWidth: 9.0,
-                              percent: 20 / timeData[i]["time"],
-                              progressColor: Colors.white,
-                              center: Container(
-                                width: 65,
-                                height: 65,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
+                    GestureDetector(
+                      onTap: (){
+                        InGameTimeTracker.timeId = timeData[i]["id"];
+                        print(timeData[i]["id"]);
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => InGameTimeTracker()));
+                      },
+                      child: Container(
+                        width: 110,
+                        margin: EdgeInsets.all(3),
+                        padding: EdgeInsets.symmetric(vertical: 10,horizontal: 15),
+                        decoration: BoxDecoration(
+                          color: Color(0xffFFCB1A),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                            children: [
+                              Text(timeData[i]["name"]),
+                              Text(getTime(timeData[i])),
+                              SizedBox(height: 10,),
+                              CircularPercentIndicator(
+                                radius: 45.0,
+                                lineWidth: 9.0,
+                                percent: timeData[i]["remain"] / timeData[i]["time"],
+                                progressColor: Colors.white,
+                                center: Container(
+                                  width: 65,
+                                  height: 65,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Center(child: Text( ((timeData[i]["remain"] / timeData[i]["time"]) * 100).toString().split(".")[0] + '%')),
                                 ),
-                                child: Center(child: Text( ((20 / timeData[i]["time"]) * 100).toString().split(".")[0] + '%')),
                               ),
-                            ),
-                          ]
+                            ]
+                        ),
                       ),
                     ),
                 ],
@@ -237,20 +245,20 @@ class _TimeTrackerBodyState extends State<TimeTrackerBody> {
 
 
   String getTime(Map<String, dynamic> timeData) {
-    String timeR = minutesToTime(timeData["time"]);
-    String time = minutesToTime(timeData["remain"]);
+    String timeR = secondsToTime(timeData["time"]);
+    String time = secondsToTime(timeData["remain"]);
     return time + " / " + timeR;
   }
 
+  String secondsToTime(int seconds) {
+    int hours = seconds ~/ 3600; // Saatleri al
+    int minutes = (seconds % 3600) ~/ 60; // Dakikaları al
 
-  String minutesToTime(int minutes) {
-    int hours = minutes ~/ 60; // Get the whole number of hours
-    int remainingMinutes = minutes % 60; // Get the remaining minutes
-
-    // Format the result as a string
-    String timeString = '$hours:${remainingMinutes.toString().padLeft(2, '0')}';
+    // Sonucu bir dize olarak biçimlendir
+    String timeString = '$hours:${minutes.toString().padLeft(2, '0')}';
 
     return timeString;
   }
+
 }
 

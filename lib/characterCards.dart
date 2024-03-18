@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'characterCardsAdd.dart';
 import 'db_helper.dart';
+import 'home.dart';
 
 class CharacterCard extends StatelessWidget {
   const CharacterCard({super.key});
@@ -41,6 +42,7 @@ class CharacterCard extends StatelessWidget {
             SizedBox(width: 25,),
             FloatingActionButton(
               onPressed: () {
+                CharacterCardsAdd.id = 0;
                 Navigator.push(context, MaterialPageRoute(builder: (context) => CharacterCardsAdd()));
               },
               backgroundColor: Color(0xffFFCB1A), // Change color as needed
@@ -105,17 +107,23 @@ class _CharacterCardBodyState extends State<CharacterCardBody> {
               ), // Bu kısımda resmi gösterin
             ),
             SizedBox(height: 5,),
-            Text("Character cards"),
+            Home.lang == "en" ? Text("Character cards") : Text("CКарточки персонажей"),
             SizedBox(height: 100,),
-            Text("It's empty here",
+            Home.lang == "en" ?  Text("It's empty here",
               style: TextStyle(
                 fontSize: 25,
                 color: Color(0xff686868)
               ),
-            ),
+            ) : Text(""),
             Container(
               width: MediaQuery.of(context).size.width*0.5,
-              child: Text("In order to add a character, click on the plus sign button.",
+              child: Home.lang == "en" ? Text("In order to add a character, click on the plus sign button.",
+                textAlign:TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Color(0xff686868),
+                ),
+              ) : Text("Чтобы добавить персонажа, нажмите на кнопку со знаком плюс.",
                 textAlign:TextAlign.center,
                 style: TextStyle(
                   fontSize: 15,
@@ -128,7 +136,13 @@ class _CharacterCardBodyState extends State<CharacterCardBody> {
             ),
             Container(
               width: MediaQuery.of(context).size.width*0.5,
-              child: Text("Hold your finger on the card to move it.",
+              child: Home.lang == "en" ?  Text("Hold your finger on the card to move it.",
+                textAlign:TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Color(0xff686868),
+                ),
+              ) : Text("Удерживайте палец на карточке, чтобы переместить ее.",
                 textAlign:TextAlign.center,
                 style: TextStyle(
                   fontSize: 15,
@@ -141,7 +155,13 @@ class _CharacterCardBodyState extends State<CharacterCardBody> {
             ),
             Container(
               width: MediaQuery.of(context).size.width*0.5,
-              child: Text("There will also be buttons for editing and deleting the card.",
+              child: Home.lang == "en" ?   Text("There will also be buttons for editing and deleting the card.",
+                textAlign:TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Color(0xff686868),
+                ),
+              ) : Text("Там же будут кнопки для редактирования и удаления карточки.",
                 textAlign:TextAlign.center,
                 style: TextStyle(
                   fontSize: 15,
@@ -300,7 +320,9 @@ class _CharacterCardBodyState extends State<CharacterCardBody> {
 
 
 
-                              IconButton(onPressed: (){}, icon: Icon(Icons.delete)),
+                              IconButton(onPressed: (){
+                                db.deleteCharacter(db.database, characterData[i]["id"]);
+                              }, icon: Icon(Icons.delete)),
                             ],
                           ),
                           ),

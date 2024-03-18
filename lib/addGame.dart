@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'db_helper.dart';
+import 'eventSchedule.dart';
+import 'home.dart';
 
 
 class AddGame extends StatelessWidget {
@@ -41,7 +43,7 @@ class _AddGameBodyState extends State<AddGameBody> {
     var db = UserDatabaseProvider();
     await db.open();
     await db.addGameData(gameName);
-    Navigator.of(context).pop();
+    Navigator.push(context,  MaterialPageRoute(builder: (context) => Home()));
   }
 
   @override

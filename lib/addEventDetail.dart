@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:gamer_diary/eventSchedule.dart';
 import 'package:wheel_chooser/wheel_chooser.dart';
 
 import 'db_helper.dart';
 
 class AddEventDetail extends StatelessWidget {
   const AddEventDetail({super.key});
+
+  static var gameName = "";
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +36,15 @@ class AddEventBody extends StatefulWidget {
   State<AddEventBody> createState() => _AddEventBodyState();
 }
 
+String month = "";
+String day = "";
+String year = "";
+String hour = "";
+String minute = "";
+
+String name = "";
+String description = "";
+
 class _AddEventBodyState extends State<AddEventBody> {
   List<Widget> monthWidgets = [
     Text("January"),
@@ -49,21 +61,29 @@ class _AddEventBodyState extends State<AddEventBody> {
     Text("December"),
   ];
 
-  var month = "";
-  var day = "";
-  var year = "";
-  var hours = "";
-  var minutes = "";
+  List<String> months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
 
-  var name = "";
-  var description = "";
+
 
   Future<void> saveEvent() async {
     var db = UserDatabaseProvider();
-    var date = month + " " + day + " " + year + " " + hours + " " + minutes;
+    var date = month + " " + day + " " + year + " " + hour + " " + minute;
+    print(date);
     await db.open();
-    await db.addEventData( "The Elder Scrolls Onlines",name, description, date);
-    Navigator.of(context).pop();
+    await db.addEventData(AddEventDetail.gameName, name, description, date);
   }
 
 
@@ -71,20 +91,29 @@ class _AddEventBodyState extends State<AddEventBody> {
 
   ];
 
+  List<String> days = [];
+
   List<Widget> yearWidgets = [
 
   ];
+
+  List<String> years = [];
 
   List<Widget> hoursWidgets = [
 
   ];
 
+  List<String> hours = [];
+
   List<Widget> minutesWidgets = [
 
   ];
 
+  List<String> minutes = [];
+
   void setDays(){
     for(int i = 1;i<32;i++){
+      days.add(i.toString());
       dayWidgets.add(
         Text(i.toString())
       );
@@ -93,6 +122,7 @@ class _AddEventBodyState extends State<AddEventBody> {
 
   void setYears(){
     for(int i = 2025;i>2010;i--){
+      years.add(i.toString());
       yearWidgets.add(
           Text(i.toString())
       );
@@ -101,6 +131,7 @@ class _AddEventBodyState extends State<AddEventBody> {
 
   void setHours(){
     for(int i = 0;i<24;i++){
+      hours.add(i.toString());
       hoursWidgets.add(
           Text(i.toString())
       );
@@ -109,6 +140,7 @@ class _AddEventBodyState extends State<AddEventBody> {
 
   void setMinutes(){
     for(int i = 0;i<60;i++){
+      minutes.add(i.toString());
       minutesWidgets.add(
           Text(i.toString())
       );
@@ -205,7 +237,7 @@ class _AddEventBodyState extends State<AddEventBody> {
                     width: 100,
                     height: 100,
                     child: WheelChooser.custom(
-                      onValueChanged: (a) => month = a,
+                      onValueChanged: (a) => month = months[a],
                       children: monthWidgets
                     ),
                   ),
@@ -214,7 +246,7 @@ class _AddEventBodyState extends State<AddEventBody> {
                     width: 100,
                     height: 100,
                     child: WheelChooser.custom(
-                      onValueChanged: (a) => day = a,
+                      onValueChanged: (a) => day = days[a],
                       children: dayWidgets,
                     ),
                   ),
@@ -223,7 +255,7 @@ class _AddEventBodyState extends State<AddEventBody> {
                     width: 100,
                     height: 100,
                     child: WheelChooser.custom(
-                      onValueChanged: (a) => year = a,
+                      onValueChanged: (a) => year = years[a],
                       children: yearWidgets,
                     ),
                   ),
@@ -241,7 +273,7 @@ class _AddEventBodyState extends State<AddEventBody> {
                     width: 100,
                     height: 100,
                     child: WheelChooser.custom(
-                      onValueChanged: (a) => hours = a,
+                      onValueChanged: (a) => hour = hours[a],
                       children: hoursWidgets,
                     ),
                   ),
@@ -250,7 +282,7 @@ class _AddEventBodyState extends State<AddEventBody> {
                     width: 100,
                     height: 100,
                     child: WheelChooser.custom(
-                      onValueChanged: (a) => minutes = a,
+                      onValueChanged: (a) => minute = minutes[a],
                       children: minutesWidgets,
                     ),
                   ),
@@ -278,6 +310,8 @@ class _AddEventBodyState extends State<AddEventBody> {
                   FloatingActionButton(
                     onPressed: () {
                       saveEvent();
+                      EventSchedule.isSet = false;
+                      Navigator.of(context).pop();
                     },
                     backgroundColor: Color(0xff1A91FF), // Change color as needed
                     child: Icon(
